@@ -1,0 +1,38 @@
+package com.example.edtech_team_new.db;
+
+import com.example.edtech_team_new.config.DbConfig;
+import org.springframework.stereotype.Component;
+import jakarta.annotation.PostConstruct; // javax yerine jakarta kullanıyoruz.
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+@Component
+public class DbHandler {
+    private final DbConfig dbConfig;
+    private Connection connection;
+
+    public DbHandler(DbConfig dbConfig) {
+        this.dbConfig = dbConfig;
+    }
+
+    @PostConstruct
+    public void init() {
+        try {
+            Class.forName("org.postgresql.Driver");
+            this.connection = DriverManager.getConnection(
+                    dbConfig.getDb_url(),
+                    dbConfig.getDb_username(),
+                    dbConfig.getDb_password()
+            );
+            System.out.println("Database connection is successful");
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Connection getConnection() {
+        return connection;
+    }
+}
