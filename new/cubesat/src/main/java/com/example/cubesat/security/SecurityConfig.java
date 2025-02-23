@@ -29,8 +29,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/user/login").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/ws/cubesat/**").permitAll()
+                        .requestMatchers("index.html/**").permitAll()
+                        .requestMatchers("/**").permitAll()
                         .requestMatchers("/swagger-ui/**").authenticated()
-
                         .requestMatchers("/api/cubesat/**").authenticated()
                         .anyRequest().authenticated()
                 )
