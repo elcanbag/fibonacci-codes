@@ -24,7 +24,13 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/user/signup", "/api/user/login", "/h2-console/**", "/ws/cubesat/**").permitAll()
+
+                        .requestMatchers("/api/user/signup").permitAll()
+                        .requestMatchers("/api/user/login").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers("/ws/cubesat/**").permitAll()
+                        .requestMatchers("/swagger-ui/**").authenticated()
+
                         .requestMatchers("/api/cubesat/**").authenticated()
                         .anyRequest().authenticated()
                 )
