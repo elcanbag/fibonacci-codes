@@ -228,7 +228,6 @@
             }
         });
     }
-    
 
     // ================== DASHBOARD PAGE ==================
     function renderDashboardPage() {
