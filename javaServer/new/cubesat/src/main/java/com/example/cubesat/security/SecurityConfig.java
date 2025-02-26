@@ -10,9 +10,15 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.ArrayList;
+
 
 @Configuration
 @RequiredArgsConstructor
@@ -22,16 +28,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                
                 .cors().and()
                 .csrf().disable()
                 .authorizeHttpRequests(auth -> auth
-
                         .requestMatchers("/api/user/signup").permitAll()
                         .requestMatchers("/api/user/login").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/ws/cubesat/**").permitAll()
                         .requestMatchers("index.html/**").permitAll()
-                        .requestMatchers("/**").permitAll()
+                        .requestMatchers("index.html/**").permitAll()
+                        .requestMatchers("/").permitAll()
                         .requestMatchers("/swagger-ui/**").authenticated()
                         .requestMatchers("/api/cubesat/**").authenticated()
                         .anyRequest().authenticated()
@@ -39,6 +46,24 @@ public class SecurityConfig {
                 .headers(headers -> headers.frameOptions().disable())
                 .httpBasic();
         return http.build();
+    }
+
+    @Bean
+    public CorsFilter corsFilter() {
+        CorsConfiguration corsConfig = new CorsConfiguration();
+        corsConfig.setAllowedOrigins(List.of(
+                "https://xjyj.site",
+                "https://api.xjyj.site",
+                "http://localhost/**"
+        ));
+        corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        corsConfig.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+        corsConfig.setExposedHeaders(Arrays.asList("Authorization", "Content-Disposition"));
+        corsConfig.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfig);
+        return new CorsFilter(source);
     }
 
     @Bean
@@ -55,5 +80,4 @@ public class SecurityConfig {
             }
         };
     }
-
 }
