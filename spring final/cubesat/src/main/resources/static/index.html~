@@ -113,12 +113,15 @@
         <form id="loginForm" class="flex flex-col">
           <label class="mb-2 font-medium">Username</label>
           <input type="text" id="loginUsername" class="border p-2 mb-4" required />
+
           <label class="mb-2 font-medium">Password</label>
           <input type="password" id="loginPassword" class="border p-2 mb-4" required />
+
           <div class="flex items-center mb-4">
             <input type="checkbox" id="rememberMe" class="mr-2" />
             <label for="rememberMe">Remember me</label>
           </div>
+
           <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
             Login
           </button>
@@ -159,15 +162,19 @@
         <form id="signupForm" class="flex flex-col">
           <label class="mb-2 font-medium">Username</label>
           <input type="text" id="signupUsername" class="border p-2 mb-4" required />
+
           <label class="mb-2 font-medium">Password</label>
           <input type="password" id="signupPassword" class="border p-2 mb-4" required />
+
           <label class="mb-2 font-medium">Registration Type</label>
           <select id="registrationType" class="border p-2 mb-4">
             <option value="register">Register with CubeSat</option>
             <option value="signup">Sign Up with CubeSat</option>
           </select>
+
           <!-- Container for extra field -->
           <div id="extraFieldContainer" class="mb-4"></div>
+
           <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
             Sign Up
           </button>
@@ -176,6 +183,7 @@
         // Show additional field based on selected registration type
         const regTypeSelect = document.getElementById("registrationType");
         const extraFieldContainer = document.getElementById("extraFieldContainer");
+
         function updateExtraField() {
             if (regTypeSelect.value === "register") {
                 extraFieldContainer.innerHTML = `
@@ -187,6 +195,7 @@
             <input type="text" id="accessToken" class="border p-2" required />`;
             }
         }
+
         regTypeSelect.addEventListener("change", updateExtraField);
         updateExtraField(); // initial update
 
@@ -273,9 +282,6 @@
           <button id="diagramBtn" class="bg-white px-4 py-2 rounded hover:bg-gray-100">
             Diagram & Statistics
           </button>
-          <button id="devInfoBtn" class="bg-white px-4 py-2 rounded hover:bg-gray-100">
-            For Development
-          </button>
         </div>
         <!-- Main content area -->
         <div class="p-4" id="contentArea">
@@ -297,7 +303,6 @@
         document.getElementById("logoutBtn").addEventListener("click", handleLogout);
         document.getElementById("simpleDataBtn").addEventListener("click", renderSimpleData);
         document.getElementById("diagramBtn").addEventListener("click", renderDiagramStatistics);
-        document.getElementById("devInfoBtn").addEventListener("click", renderDevInfo);
         document.getElementById("refreshLatestBtn").addEventListener("click", fetchLatestData);
 
         // Fetch latest data on initial load
@@ -538,36 +543,6 @@
                 }
             }
         });
-    }
-
-    // ================== DEVELOPMENT INFO SECTION ==================
-    function renderDevInfo() {
-        const contentArea = document.getElementById("contentArea");
-        contentArea.innerHTML = `
-        <div class="bg-white p-6 rounded shadow">
-          <h2 class="text-xl font-bold mb-4">https://xjyj.site/api</h2>
-          <p class="mb-4">
-            The following APIs are available for integration:
-          </p>
-          <ul class="list-disc pl-5 mb-4">
-            <li><strong>/user/login</strong> – Login with your credentials.</li>
-            <li><strong>/user/signup</strong> – Create a new account.</li>
-            <li><strong>/user/register-cubesat</strong> – Register a new CubeSat along with user creation.</li>
-            <li><strong>/user/signup-with-cubesat</strong> – Sign up using an existing CubeSat access token.</li>
-            <li><strong>/cubesat/latest</strong> – Retrieve the latest CubeSat sensor data.</li>
-            <li><strong>/cubesat/records</strong> – Get CubeSat records by date range.</li>
-            <li><strong>/graph/cubesat-data/json</strong> – Fetch data for charts and statistics.</li>
-          </ul>
-          <p class="mb-4">
-            All endpoints require Basic Authentication. Include an "Authorization" header with your credentials encoded in Base64.
-          </p>
-          <pre class="bg-gray-100 p-3 rounded text-sm">
-Authorization: Basic base64(username:password)
-          </pre>
-          <p>
-            For more details, please refer to our API documentation.
-          </p>
-        </div>`;
     }
 </script>
 </body>

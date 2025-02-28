@@ -16,7 +16,7 @@ inline void gps_init() {
 }
 
 inline void gps_update() {
-  while (gpsSerial.available()) {
+  while (gpsSerial.available() > 0) {
     gps.encode(gpsSerial.read());
   }
 }
@@ -24,27 +24,33 @@ inline void gps_update() {
 inline String gps_getDate() {
   String dateStr;
   if (gps.date.isValid() && gps.time.isValid()) {
-    int year = gps.date.year();
-    int month = gps.date.month();
-    int day = gps.date.day();
     char dateBuffer[11];
-    sprintf(dateBuffer, "%04d-%02d-%02d", year, month, day);
+    sprintf(dateBuffer, "%04d-%02d-%02d", gps.date.year(), gps.date.month(), gps.date.day());
     dateStr = String(dateBuffer);
   } else {
-    dateStr = "2025-02-20"; // Default date if GPS data is invalid
+    dateStr = "2025-03-01";
   }
   return dateStr;
 }
 
 inline String gps_getLat() {
+  unsigned long startTime = millis();
+  while (!gps.location.isValid() && millis() - startTime < 2000) {
+    gps_update();
+  }
   return gps.location.isValid() ? String(gps.location.lat(), 6) : "0.000000";
 }
 
 inline String gps_getLong() {
+  unsigned long startTime = millis();
+  while (!gps.location.isValid() && millis() - startTime < 2000) {
+    gps_update();
+  }
   return gps.location.isValid() ? String(gps.location.lng(), 6) : "0.000000";
 }
 
 inline String gps_getSatellites() {
+  gps_update();
   return gps.satellites.isValid() ? String(gps.satellites.value()) : "0";
 }
 

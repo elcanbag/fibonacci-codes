@@ -14,10 +14,10 @@
 
 using namespace websockets;
 
-// WiFi & WebSocket settings – adjust these as needed:
+
 const char* ssid = "Qwerty_asggsvsvsgz";
 const char* password = "ThisLANisMyLAN";
-const char* websocket_url = "ws://192.168.0.140:8080/ws";
+const char* websocket_url = "ws://5.175.136.150/ws/cubesat";
 
 WebsocketsClient client;
 
@@ -90,7 +90,9 @@ inline void ws_loop() {
                 ";internalTemp:" + String(mpuTempEvent.temperature, 1) +
                 ";pressure:" + String(pressure, 0) +
                 ";alt:" + String(altitude, 1) +
-                ";sat:" + String(gps_getSatellites());
+                ";sat:" + String(gps_getSatellites()) +
+                ";token:06dfb2b9-74f1-4913-bf64-8b8566ad17ac"
+                ;
 
   // ----- Send Data via WebSocket -----
   client.send(data);

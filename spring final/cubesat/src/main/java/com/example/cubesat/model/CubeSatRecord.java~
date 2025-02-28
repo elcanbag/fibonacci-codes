@@ -3,12 +3,13 @@ package com.example.cubesat.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "cube_sat_records")
+@Table(name = "dates")
 public class CubeSatRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,6 +26,8 @@ public class CubeSatRecord {
     private String connectedSats;
     private String internalTemp;
     private String pressure;
+    private String alt;
+    private String sat;
 
     private LocalDateTime receivedAt;
 

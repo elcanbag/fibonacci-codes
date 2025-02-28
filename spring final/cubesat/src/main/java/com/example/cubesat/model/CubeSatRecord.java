@@ -23,9 +23,10 @@ public class CubeSatRecord {
     private String z;
     private String lat;
     private String longg;
-    private String connectedSats;
     private String internalTemp;
     private String pressure;
+    private String alt;
+    private String sat;
 
     private LocalDateTime receivedAt;
 

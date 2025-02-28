@@ -41,7 +41,7 @@ public class CubeSatWebSocketHandler extends TextWebSocketHandler {
                 }
             }
 
-            // Gelen veride "token" bilgisi bekleniyor
+
             String token = values.get("token");
             if (token == null) {
                 return null;
@@ -63,6 +63,8 @@ public class CubeSatWebSocketHandler extends TextWebSocketHandler {
             record.setInternalTemp(values.get("internalTemp"));
             record.setPressure(values.get("pressure"));
             record.setReceivedAt(LocalDateTime.now());
+            record.setAlt(values.get("alt"));
+            record.setSat(values.get("sat"));
             record.setCubeSat(cubeSat);
 
             return record;
