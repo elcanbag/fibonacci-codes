@@ -1,5 +1,6 @@
 package com.example.cubesat.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,5 +22,6 @@ public class CubeSat {
     private String accessToken;
 
     @OneToMany(mappedBy = "cubeSat")
+    @JsonIgnore
     private List<User> users;
 }

@@ -7,7 +7,6 @@ import com.example.cubesat.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,6 +17,7 @@ import java.util.UUID;
 public class UserController {
     private final UserRepository userRepository;
     private final CubeSatRepository cubeSatRepository;
+
 
     @PostMapping("/signup-with-cubesat")
     public ResponseEntity<?> signUpWithCubeSat(@RequestBody Map<String, String> request) {
@@ -30,6 +30,10 @@ public class UserController {
             return ResponseEntity.status(400).body(Map.of("message", "Invalid CubeSat token"));
         }
 
+        if (userRepository.findByUsername(username).isPresent()) {
+            return ResponseEntity.status(400).body(Map.of("message", "Username already exists"));
+        }
+
         User user = new User();
         user.setUsername(username);
         user.setPassword(password);
@@ -39,11 +43,16 @@ public class UserController {
         return ResponseEntity.ok(Map.of("message", "User registered successfully"));
     }
 
+
     @PostMapping("/register-cubesat")
     public ResponseEntity<?> registerCubeSat(@RequestBody Map<String, String> request) {
         String username = request.get("username");
         String password = request.get("password");
         String cubeSatName = request.get("cubeSatName");
+
+        if (userRepository.findByUsername(username).isPresent()) {
+            return ResponseEntity.status(400).body(Map.of("message", "Username already exists"));
+        }
 
         CubeSat cubeSat = new CubeSat();
         cubeSat.setName(cubeSatName);
@@ -69,7 +78,8 @@ public class UserController {
             return ResponseEntity.status(401).body(Map.of("message", "Invalid credentials"));
         }
 
-        return ResponseEntity.ok(Map.of("message", "Login successful"));
+        String responseMessage = String.format("Login successful, username is \"%s\"", username);
+        return ResponseEntity.ok(Map.of("message", responseMessage));
     }
 
 }

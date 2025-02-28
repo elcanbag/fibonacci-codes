@@ -18,7 +18,8 @@ public class GraphService {
     private final CubeSatRecordRepository repository;
 
     public Map<String, Object> getGraphDataForCubeSat(CubeSat cubeSat, LocalDateTime start, LocalDateTime end, String type) {
-        List<CubeSatRecord> records = repository.findByCubeSatAndReceivedAtBetween(cubeSat, start, end);
+
+        List<CubeSatRecord> records = repository.findLimitedRecords(cubeSat.getId(), start, end);
 
         if (records.isEmpty()) {
             throw new IllegalArgumentException("No data found in the given time range");

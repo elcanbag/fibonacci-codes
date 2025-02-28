@@ -30,7 +30,7 @@ public class CubeSatController {
         return cubeSatService.getLatestRecordForCubeSat(user.getCubeSat());
     }
 
-    @Operation(summary = "Retrieve ALL CubeSat records within a specified time range for the authenticated user")
+    @Operation(summary = "Retrieve up to 100 CubeSat records within a specified time range for the authenticated user")
     @GetMapping("/records")
     public List<CubeSatRecord> getRecordsBetweenDates(
             Authentication authentication,
@@ -41,6 +41,6 @@ public class CubeSatController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         LocalDateTime start = LocalDateTime.parse(startDate);
         LocalDateTime end = LocalDateTime.parse(endDate);
-        return cubeSatService.getRecordsBetweenDatesForCubeSat(user.getCubeSat(), start, end);
+        return cubeSatService.getLimitedRecordsBetweenDatesForCubeSat(user.getCubeSat(), start, end);
     }
 }
