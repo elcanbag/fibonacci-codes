@@ -17,7 +17,7 @@ using namespace websockets;
 // WiFi & WebSocket settings – adjust these as needed:
 const char* ssid = "Qwerty_asggsvsvsgz";
 const char* password = "ThisLANisMyLAN";
-const char* websocket_url = "ws://192.168.0.136:8080/ws";
+const char* websocket_url = "ws://192.168.0.140:8080/ws";
 
 WebsocketsClient client;
 

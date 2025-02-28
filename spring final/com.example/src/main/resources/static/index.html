@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EdTech Team Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100">
+  <header class="bg-blue-600 text-white p-4 shadow">
+    <h1 class="text-3xl font-bold text-center">EdTech Team Dashboard</h1>
+  </header>
+
+  <div class="container mx-auto mt-4 px-4">
+    <div class="flex justify-center space-x-4">
+      <button id="btnSimple" class="px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white font-semibold rounded">
+        Simple Data
+      </button>
+      <button id="btnDiagram" class="px-4 py-2 bg-green-500 hover:bg-green-700 text-white font-semibold rounded">
+        Diagram &amp; Statistics
+      </button>
+    </div>
+  </div>
+
+  <!-- Simple Data Section -->
+  <section id="simpleView" class="container mx-auto mt-8 px-4">
+    <div class="flex flex-col md:flex-row justify-between items-center">
+      <h2 class="text-xl font-semibold mb-4 md:mb-0">Latest Data</h2>
+      <button id="refreshButton" class="px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white font-semibold rounded shadow">
+        Refresh Data
+      </button>
+    </div>
+    <div id="dataDisplay" class="mt-6 p-6 bg-white rounded shadow">
+      Loading data...
+    </div>
+  </section>
+
+  <!-- Diagram &amp; Statistics Section -->
+  <section id="diagramView" class="container mx-auto mt-8 px-4 hidden">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex flex-col md:flex-row items-center gap-4">
+        <label for="fromDate" class="text-gray-700">From:</label>
+        <input type="datetime-local" id="fromDate" class="border p-2 rounded">
+        <label for="toDate" class="text-gray-700">To:</label>
+        <input type="datetime-local" id="toDate" class="border p-2 rounded">
+      </div>
+      <div class="flex items-center gap-4">
+        <label for="metricSelect" class="text-gray-700">Select Metric:</label>
+        <select id="metricSelect" class="border p-2 rounded">
+          <option value="temperature">Temperature</option>
+          <option value="humidity">Humidity</option>
+          <option value="pressure">Pressure</option>
+          <option value="internalTemp">Internal Temperature</option>
+        </select>
+      </div>
+      <button id="fetchButton" class="px-4 py-2 bg-green-500 hover:bg-green-700 text-white font-semibold rounded shadow">
+        Get Data
+      </button>
+    </div>
+    <div class="bg-white p-6 rounded shadow mb-8">
+      <canvas id="chartCanvas"></canvas>
+    </div>
+    <div class="bg-white p-6 rounded shadow">
+      <h2 class="text-xl font-semibold mb-4">Statistics</h2>
+      <div id="statsDisplay" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+    </div>
+  </section>
+
+  <footer class="mt-8 bg-gray-200 text-center p-4">
+    <p class="text-sm text-gray-700">&copy; 2025 EdTech Team. All rights reserved.</p>
+  </footer>
+
+  <script>
+    const btnSimple = document.getElementById('btnSimple');
+    const btnDiagram = document.getElementById('btnDiagram');
+    const simpleView = document.getElementById('simpleView');
+    const diagramView = document.getElementById('diagramView');
+    const metricSelect = document.getElementById('metricSelect');
+
+    btnSimple.addEventListener('click', () => {
+      simpleView.classList.remove('hidden');
+      diagramView.classList.add('hidden');
+    });
+    btnDiagram.addEventListener('click', () => {
+      diagramView.classList.remove('hidden');
+      simpleView.classList.add('hidden');
+      fetchDiagramData();
+    });
+
+    // Simple Data view: Fetch latest data from /api/dates
+    async function fetchSimpleData() {
+      try {
+        const response = await fetch('http://localhost:8080/api/dates');
+        if (response.status === 204) {
+          document.getElementById('dataDisplay').innerText = "No data available.";
+          return;
+        }
+        const data = await response.json();
+        document.getElementById('dataDisplay').innerHTML = `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="p-4 bg-blue-50 rounded shadow">
+              <h3 class="font-bold text-blue-800">Record Date</h3>
+              <p class="text-gray-700">${data.recordDate || 'N/A'}</p>
+            </div>
+            <div class="p-4 bg-blue-50 rounded shadow">
+              <h3 class="font-bold text-blue-800">Temperature</h3>
+              <p class="text-gray-700">${data.temperature || 'N/A'}</p>
+            </div>
+            <div class="p-4 bg-blue-50 rounded shadow">
+              <h3 class="font-bold text-blue-800">Humidity</h3>
+              <p class="text-gray-700">${data.humidity || 'N/A'}</p>
+            </div>
+            <div class="p-4 bg-blue-50 rounded shadow">
+              <h3 class="font-bold text-blue-800">Coordinates</h3>
+              <p class="text-gray-700">Lat: ${data.lat || 'N/A'}, Long: ${data.longg || 'N/A'}</p>
+            </div>
+            <div class="p-4 bg-blue-50 rounded shadow">
+              <h3 class="font-bold text-blue-800">Accelerometer</h3>
+              <p class="text-gray-700">X: ${data.x || 'N/A'}, Y: ${data.y || 'N/A'}, Z: ${data.z || 'N/A'}</p>
+            </div>
+            <div class="p-4 bg-blue-50 rounded shadow">
+              <h3 class="font-bold text-blue-800">Internal Temperature</h3>
+              <p class="text-gray-700">${data.internalTemp || 'N/A'}</p>
+            </div>
+            <div class="p-4 bg-blue-50 rounded shadow">
+              <h3 class="font-bold text-blue-800">Pressure</h3>
+              <p class="text-gray-700">${data.pressure || 'N/A'}</p>
+            </div>
+          </div>
+        `;
+      } catch (error) {
+        console.error("Fetch error:", error);
+      }
+    }
+    document.getElementById('refreshButton').addEventListener('click', fetchSimpleData);
+    setInterval(fetchSimpleData, 5000);
+    fetchSimpleData();
+
+    // Diagram & Statistics view
+    const chartCtx = document.getElementById('chartCanvas').getContext('2d');
+    let lineChart;
+    function createChart(labels, data, metric) {
+      if (lineChart) lineChart.destroy();
+      const metricLabel = metric.charAt(0).toUpperCase() + metric.slice(1);
+      lineChart = new Chart(chartCtx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: metricLabel,
+            data: data,
+            fill: false,
+            borderColor: 'rgba(75, 192, 192, 1)',
+            tension: 0.1
+          }]
+        },
+        options: {
+          scales: {
+            x: { title: { display: true, text: 'Time' } },
+            y: { title: { display: true, text: metricLabel } }
+          }
+        }
+      });
+    }
+    async function fetchDiagramData() {
+      const from = document.getElementById('fromDate').value;
+      const to = document.getElementById('toDate').value;
+      if (!from || !to) {
+        alert('Please select both From and To dates.');
+        return;
+      }
+      try {
+        const url = `http://localhost:8080/api/dates/interval?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
+        const response = await fetch(url);
+        if (response.status === 204) {
+          alert('No data available for the selected interval.');
+          return;
+        }
+        const dataArray = await response.json();
+        processDiagramData(dataArray);
+      } catch (error) {
+        console.error("Fetch error:", error);
+      }
+    }
+    function processDiagramData(dataArray) {
+      if (!Array.isArray(dataArray)) return;
+      dataArray.sort((a, b) => new Date(a.receivedAt) - new Date(b.receivedAt));
+      const labels = dataArray.map(item => new Date(item.receivedAt).toLocaleString());
+      const metric = document.getElementById('metricSelect').value;
+      const metricData = dataArray.map(item => parseFloat(item[metric]) || 0);
+      createChart(labels, metricData, metric);
+      displayStatistics(dataArray, metric);
+    }
+    function displayStatistics(dataArray, metric) {
+      const statsDiv = document.getElementById('statsDisplay');
+      let sum = 0;
+      dataArray.forEach(item => {
+        sum += parseFloat(item[metric]) || 0;
+      });
+      const avg = dataArray.length ? (sum / dataArray.length).toFixed(2) : "N/A";
+      const metricLabel = metric.charAt(0).toUpperCase() + metric.slice(1);
+      statsDiv.innerHTML = `
+        <div class="p-4 bg-green-50 rounded shadow">
+          <h3 class="font-bold text-green-800">Average ${metricLabel}</h3>
+          <p class="text-gray-700">${avg}</p>
+        </div>
+      `;
+    }
+    document.getElementById('fetchButton').addEventListener('click', fetchDiagramData);
+    metricSelect.addEventListener('change', fetchDiagramData);
+    window.addEventListener('load', () => {
+      const now = new Date();
+      const prior = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+      document.getElementById('fromDate').value = prior.toISOString().slice(0, 16);
+      document.getElementById('toDate').value = now.toISOString().slice(0, 16);
+    });
+  </script>
+</body>
+</html>

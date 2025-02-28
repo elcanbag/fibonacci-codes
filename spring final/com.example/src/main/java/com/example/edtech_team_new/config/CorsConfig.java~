@@ -1,0 +1,4 @@
+package com.example.edtech_team_new.config;
+
+public class CorsConfig {
+}
