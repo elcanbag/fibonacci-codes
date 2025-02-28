@@ -1,7 +1,7 @@
 package com.example.cubesat.service;
 
 import com.example.cubesat.model.CubeSatRecord;
-import com.example.cubesat.repository.CubeSatRepository;
+import com.example.cubesat.repository.CubeSatRecordRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class GraphService {
-    private final CubeSatRepository repository;
+    private final CubeSatRecordRepository repository;
 
     public Map<String, Object> getGraphData(LocalDateTime start, LocalDateTime end, String type) {
         List<CubeSatRecord> records = repository.findByReceivedAtBetween(start, end);

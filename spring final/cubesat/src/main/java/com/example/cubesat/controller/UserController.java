@@ -1,35 +1,75 @@
 package com.example.cubesat.controller;
 
-import com.example.cubesat.service.UserService;
+import com.example.cubesat.model.CubeSat;
+import com.example.cubesat.model.User;
+import com.example.cubesat.repository.CubeSatRepository;
+import com.example.cubesat.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
 public class UserController {
-    private final UserService userService;
+    private final UserRepository userRepository;
+    private final CubeSatRepository cubeSatRepository;
 
-    @PostMapping("/signup")
-    public ResponseEntity<?> signUp(@RequestBody Map<String, String> request) {
+    @PostMapping("/signup-with-cubesat")
+    public ResponseEntity<?> signUpWithCubeSat(@RequestBody Map<String, String> request) {
         String username = request.get("username");
         String password = request.get("password");
-        String result = userService.registerUser(username, password);
-        return ResponseEntity.ok(Map.of("message", result));
+        String accessToken = request.get("accessToken");
+
+        Optional<CubeSat> cubeSat = cubeSatRepository.findByAccessToken(accessToken);
+        if (cubeSat.isEmpty()) {
+            return ResponseEntity.status(400).body(Map.of("message", "Invalid CubeSat token"));
+        }
+
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(password);
+        user.setCubeSat(cubeSat.get());
+        userRepository.save(user);
+
+        return ResponseEntity.ok(Map.of("message", "User registered successfully"));
+    }
+
+    @PostMapping("/register-cubesat")
+    public ResponseEntity<?> registerCubeSat(@RequestBody Map<String, String> request) {
+        String username = request.get("username");
+        String password = request.get("password");
+        String cubeSatName = request.get("cubeSatName");
+
+        CubeSat cubeSat = new CubeSat();
+        cubeSat.setName(cubeSatName);
+        cubeSat.setAccessToken(UUID.randomUUID().toString());
+        cubeSatRepository.save(cubeSat);
+
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(password);
+        user.setCubeSat(cubeSat);
+        userRepository.save(user);
+
+        return ResponseEntity.ok(Map.of("message", "CubeSat registered successfully", "accessToken", cubeSat.getAccessToken()));
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> request) {
         String username = request.get("username");
         String password = request.get("password");
-        boolean authenticated = userService.authenticateUser(username, password);
-        if (authenticated) {
-            return ResponseEntity.ok(Map.of("message", "Login successful"));
-        } else {
+
+        Optional<User> user = userRepository.findByUsername(username);
+        if (user.isEmpty() || !user.get().getPassword().equals(password)) {
             return ResponseEntity.status(401).body(Map.of("message", "Invalid credentials"));
         }
+
+        return ResponseEntity.ok(Map.of("message", "Login successful"));
     }
+
 }

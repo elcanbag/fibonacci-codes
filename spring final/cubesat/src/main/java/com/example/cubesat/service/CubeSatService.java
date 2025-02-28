@@ -1,7 +1,7 @@
 package com.example.cubesat.service;
 
 import com.example.cubesat.model.CubeSatRecord;
-import com.example.cubesat.repository.CubeSatRepository;
+import com.example.cubesat.repository.CubeSatRecordRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +11,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CubeSatService {
-    private final CubeSatRepository repository;
+    private final CubeSatRecordRepository repository;
 
     public void saveRecord(CubeSatRecord record) {
         repository.save(record);

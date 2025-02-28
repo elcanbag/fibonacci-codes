@@ -1,12 +1,10 @@
 package com.example.cubesat.repository;
 
-import com.example.cubesat.model.CubeSatRecord;
+import com.example.cubesat.model.CubeSat;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Optional;
 
-public interface CubeSatRepository extends JpaRepository<CubeSatRecord, Long> {
-    CubeSatRecord findTopByOrderByReceivedAtDesc();
-    List<CubeSatRecord> findByReceivedAtBetween(LocalDateTime start, LocalDateTime end);
+public interface CubeSatRepository extends JpaRepository<CubeSat, Long> {
+    Optional<CubeSat> findByAccessToken(String accessToken);
 }

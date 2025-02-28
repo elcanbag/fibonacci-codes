@@ -5,10 +5,12 @@ import com.example.cubesat.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.*;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -19,7 +21,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ArrayList;
 
-
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
@@ -28,18 +29,24 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                
                 .cors().and()
                 .csrf().disable()
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/user/signup").permitAll()
-                        .requestMatchers("/api/user/login").permitAll()
+                        .requestMatchers("/api/user/login/**").permitAll()
+                        .requestMatchers("/api/user/logout").permitAll()
+                        .requestMatchers("/api/user/signup-with-cubesat").permitAll()
+                        .requestMatchers("/api/user/register-cubesat").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/ws/cubesat/**").permitAll()
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("index.html").permitAll()
                         .requestMatchers("index.html/**").permitAll()
+                        .requestMatchers("index.html/**").permitAll()
+
+                        .requestMatchers("/").permitAll()
                         .requestMatchers("index.html/**").permitAll()
                         .requestMatchers("/").permitAll()
-                        .requestMatchers("/swagger-ui/**").authenticated()
                         .requestMatchers("/api/cubesat/**").authenticated()
                         .anyRequest().authenticated()
                 )
@@ -54,7 +61,7 @@ public class SecurityConfig {
         corsConfig.setAllowedOrigins(List.of(
                 "https://xjyj.site",
                 "https://api.xjyj.site",
-                "http://localhost/**"
+                "http://localhost"
         ));
         corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfig.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
@@ -67,17 +74,36 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager() {
-        return authentication -> {
-            String username = authentication.getName();
-            String password = authentication.getCredentials().toString();
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService());
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
+    }
 
+    @Bean
+    public AuthenticationManager authenticationManager() {
+        return new ProviderManager(authenticationProvider());
+    }
+
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return username -> {
             Optional<User> user = userRepository.findByUsername(username);
-            if (user.isPresent() && user.get().getPassword().equals(password)) {
-                return new UsernamePasswordAuthenticationToken(user.get(), null, new ArrayList<>());
-            } else {
-                throw new BadCredentialsException("Invalid credentials");
+            if (user.isEmpty()) {
+                throw new BadCredentialsException("User not found");
             }
+            return org.springframework.security.core.userdetails.User
+                    .withUsername(user.get().getUsername())
+                    .password(user.get().getPassword())
+                    .roles("USER")
+                    .build();
         };
+    }
+
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return NoOpPasswordEncoder.getInstance(); // No hashing
     }
 }
