@@ -1,0 +1,4 @@
+package com.example.cubesat.model;
+
+public class CubeSatRecord {
+}
