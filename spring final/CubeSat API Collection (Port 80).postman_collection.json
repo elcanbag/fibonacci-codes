@@ -1,0 +1,234 @@
+{
+	"info": {
+		"_postman_id": "cd00f657-81e5-4928-a8b2-23624a798d46",
+		"name": "CubeSat API Collection (Port 80)",
+		"description": "Postman test koleksiyonu: Kullanıcı kayıt, login, CubeSat verileri ve grafik verisi uç noktaları. Port 80 kullanılarak.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39488940"
+	},
+	"item": [
+		{
+			"name": "Register CubeSat",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"newUser\",\n  \"password\": \"newPassword\",\n  \"cubeSatName\": \"CubeSat1r\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:80/api/user/register-cubesat",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "80",
+					"path": [
+						"api",
+						"user",
+						"register-cubesat"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Signup with CubeSat",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"testUser\",\n  \"password\": \"testPassword\",\n  \"accessToken\": \"3d4ccbf2-4ec4-45bf-a1d9-d7cde3890a99\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:80/api/user/signup-with-cubesat",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "80",
+					"path": [
+						"api",
+						"user",
+						"signup-with-cubesat"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"testUser\",\n  \"password\": \"testPassword\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:80/api/user/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "80",
+					"path": [
+						"api",
+						"user",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Latest CubeSat Record",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "testUser",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "testPassword",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:80/api/cubesat/latest",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "80",
+					"path": [
+						"api",
+						"cubesat",
+						"latest"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get CubeSat Records by Date Range",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "testUser",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "testPassword",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:80/api/cubesat/records?start=2025-02-01T00:00:00&end=2025-03-03T23:59:59",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "80",
+					"path": [
+						"api",
+						"cubesat",
+						"records"
+					],
+					"query": [
+						{
+							"key": "start",
+							"value": "2025-02-01T00:00:00"
+						},
+						{
+							"key": "end",
+							"value": "2025-03-03T23:59:59"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get CubeSat Graph Data",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "testUser",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "testPassword",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:80/api/graph/cubesat-data/json?start=2025-02-01T00:00:00&end=2025-03-03T23:59:59&type=temperature",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "80",
+					"path": [
+						"api",
+						"graph",
+						"cubesat-data",
+						"json"
+					],
+					"query": [
+						{
+							"key": "start",
+							"value": "2025-02-01T00:00:00"
+						},
+						{
+							"key": "end",
+							"value": "2025-03-03T23:59:59"
+						},
+						{
+							"key": "type",
+							"value": "temperature"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
