@@ -17,7 +17,7 @@ using namespace websockets;
 
 const char* ssid = "QAZWSXEDC";
 const char* password = "qwerty123";
-const char* websocket_url = "ws://5.175.136.150/ws/cubesat";
+const char* websocket_url = "ws://172.20.10.3:8094/";
 
 WebsocketsClient client;
 
